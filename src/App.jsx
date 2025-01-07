@@ -1,21 +1,38 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState } from 'react'
-import data from './data/data'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
+const apiUrl = 'http://localhost:3000'
 
 function App() {
   const setObject = {
-    id: 0, title: '', content: '', image: '', category: ''
+    title: '', content: '', image: '',
   }
-  const [post, setPost] = useState(data)
+  const [post, setPost] = useState([])
   const [newPost, setNewPost] = useState(setObject)
   //per aggiungere più campi inserire un nuovo state
 
+  useEffect(() => {
+    getPosts()
+  }, [])
+
+  const getPosts = async () => {
+    axios.get(`${apiUrl}/posts`).then(response => {
+      console.log(response.data);
+      setPost(response.data)
+    })
+  }
+
+
   const sendPost = event => {
     event.preventDefault()
-    //aggiungere il nuovo parametro ad un campo dentro l'oggetto sottostante
-    setPost([...post, { id: Date.now(), title: newPost.title, content: newPost.content, image: newPost.image, category: newPost.category, published: newPost.published }])
-    setNewPost(setObject)
+
+    axios.post(`${apiUrl}/posts`, newPost).then(response => {
+
+      //aggiungere il nuovo parametro ad un campo dentro l'oggetto sottostante
+      setPost([...post, { title: newPost.title, content: newPost.content, image: newPost.image }])
+      setNewPost(setObject)
+    })
   }
 
   const deletePost = (postId) => {
@@ -73,39 +90,6 @@ function App() {
             />
           </div>
 
-          {/* Select per la categoria */}
-          <div className="mb-3">
-            <label htmlFor="category" className="form-label">Category</label>
-            <select
-              name="category"
-              id="category"
-              className="form-select"
-              value={newPost.category}
-              onChange={handleInputData}
-            >
-              <option value="">Select a category</option>
-              <option value="tech">Tech</option>
-              <option value="lifestyle">Lifestyle</option>
-              <option value="education">Education</option>
-              <option value="health">Health</option>
-            </select>
-          </div>
-
-          {/* Checkbox per stato di pubblicazione */}
-          <div className="form-check mb-3">
-            <input
-              type="checkbox"
-              name="published"
-              id="published"
-              className="form-check-input"
-              checked={newPost.published}
-              onChange={(e) => handleInputData({
-                target: { name: 'published', value: e.target.checked }
-              })}
-            />
-            <label htmlFor="published" className="form-check-label">Publish this post</label>
-          </div>
-
           {/* Pulsante di invio */}
           <button type="submit" className="btn btn-primary">Submit</button>
         </form>
@@ -121,14 +105,6 @@ function App() {
                     <img src={curPost.image} alt={curPost.image} className="img-fluid mb-3" />
                   )}
                   <p className="card-text">{curPost.content}</p>
-                  <p className="card-text">
-                    <small className="text-muted">Category: {curPost.category}</small>
-                  </p>
-                  <p className="card-text">
-                    <small className={`text-${curPost.published ? 'success' : 'danger'}`}>
-                      {curPost.published ? 'Published' : 'Draft'}
-                    </small>
-                  </p>
                   <button
                     onClick={() => deletePost(curPost.id)}
                     className="btn btn-danger"
