@@ -37,6 +37,9 @@ function App() {
 
   const deletePost = (postId) => {
     setPost(post.filter(post => post.id !== postId))
+    axios.delete(`${apiUrl}/posts/${postId}`).then(response => {
+      console.log(response.data);
+    })
   }
 
   const handleInputData = e => {
