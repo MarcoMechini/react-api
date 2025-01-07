@@ -16,10 +16,10 @@ function App() {
     getPosts()
   }, [])
 
-  const getPosts = async () => {
+  const getPosts = () => {
     axios.get(`${apiUrl}/posts`).then(response => {
-      console.log(response.data);
       setPost(response.data)
+      console.log(response.data);
     })
   }
 
@@ -105,7 +105,7 @@ function App() {
                 <div className="card-body">
                   <h5 className="card-title">{curPost.title}</h5>
                   {curPost.image && (
-                    <img src={curPost.image} alt={curPost.image} className="img-fluid mb-3" />
+                    <img src={`${apiUrl}/${curPost.image}`} alt={curPost.image} className="img-fluid mb-3" />
                   )}
                   <p className="card-text">{curPost.content}</p>
                   <button
