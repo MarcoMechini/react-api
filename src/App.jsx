@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import Card from './components/Card';
 
 const apiUrl = 'http://localhost:3000'
 
@@ -101,21 +102,7 @@ function App() {
         <div className="mt-4">
           {post.length !== 0 ? (
             post.map(curPost => (
-              <div key={curPost.id} className="card mb-3">
-                <div className="card-body">
-                  <h5 className="card-title">{curPost.title}</h5>
-                  {curPost.image && (
-                    <img src={`${apiUrl}/${curPost.image}`} alt={curPost.image} className="img-fluid mb-3" />
-                  )}
-                  <p className="card-text">{curPost.content}</p>
-                  <button
-                    onClick={() => deletePost(curPost.id)}
-                    className="btn btn-danger"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+              <Card key={curPost.id} post={curPost} apiUrl={apiUrl} deletePost={deletePost} />
             ))
           ) : (
             <p className="text-muted">Senza nulla</p>
